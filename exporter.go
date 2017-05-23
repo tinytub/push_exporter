@@ -67,7 +67,7 @@ func (c *PushExporter) Collect(ch chan<- prometheus.Metric) {
 
 func main() {
 	var (
-		addr        = flag.String("telemetry.addr", ":9128", "host:port for ceph exporter")
+		addr        = flag.String("telemetry.addr", ":9129", "host:port for push exporter")
 		metricsPath = flag.String("telemetry.path", "/metrics", "URL path for surfacing collected metrics")
 	)
 	flag.Parse()
@@ -83,9 +83,9 @@ func main() {
 		http.Redirect(w, r, *metricsPath, http.StatusMovedPermanently)
 	})
 
-	log.Printf("Starting ceph exporter on %q", *addr)
+	log.Printf("Starting push exporter on %q", *addr)
 	if err := http.ListenAndServe(*addr, nil); err != nil {
-		log.Fatalf("cannot start ceph exporter: %s", err)
+		log.Fatalf("cannot start push exporter: %s", err)
 	}
 
 }
