@@ -73,7 +73,7 @@ func NewPushInfoCollector() *PushInfoCollector {
 				Help:      "push user amount",
 				//				ConstLabels: labels,
 			},
-			pushLabel,
+			[]string{"productid", "appname"},
 		),
 		MSGID: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -97,8 +97,9 @@ func (p *PushInfoCollector) collectorList() []prometheus.Collector {
 
 type Pushinfo struct {
 	Data []struct {
-		Amount int    `json:"amount"`
-		ID     string `json:"productId"`
+		Amount  int    `json:"amount"`
+		ID      string `json:"productId"`
+		Appname string `json:"appname"`
 	} `json:"data"`
 }
 type MsgIDinfo struct {
@@ -140,7 +141,7 @@ func (p *PushInfoCollector) collect() error {
 		fmt.Println(err)
 	}
 	for _, ua := range online.Data {
-		p.Online.WithLabelValues(ua.ID).Set(float64(ua.Amount))
+		p.Online.WithLabelValues(ua.ID, ua.Appname).Set(float64(ua.Amount))
 	}
 	return nil
 
