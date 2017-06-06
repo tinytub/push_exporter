@@ -64,7 +64,7 @@ func NewPushInfoCollector() *PushInfoCollector {
 				Help:      "push online",
 				//			ConstLabels: labels,
 			},
-			pushLabel,
+			[]string{"productid", "appname"},
 		),
 		UserAmount: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -73,7 +73,7 @@ func NewPushInfoCollector() *PushInfoCollector {
 				Help:      "push user amount",
 				//				ConstLabels: labels,
 			},
-			[]string{"productid", "appname"},
+			pushLabel,
 		),
 		MSGID: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -137,10 +137,12 @@ func (p *PushInfoCollector) collect() error {
 	}
 	var online Pushinfo
 	onlineBody := doRequest("http://10.143.184.153:8090/online.php")
+	fmt.Println(string(onlineBody))
 	if err := json.Unmarshal(onlineBody, &online); err != nil {
 		fmt.Println(err)
 	}
 	for _, ua := range online.Data {
+
 		p.Online.WithLabelValues(ua.ID, ua.Appname).Set(float64(ua.Amount))
 	}
 	return nil
